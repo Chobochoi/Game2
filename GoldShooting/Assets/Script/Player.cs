@@ -7,15 +7,24 @@ public class Player : MonoBehaviour
     public float speed;
     public float maxShotDelay;
     public float curShotDelay;
-    public float power;
-
+    public int power;
+    public int maxPower;
+    public int boom;
+    public int maxBoom;
+    public int life;
+    public int score;
     public bool isTouchTop;
     public bool isTouchBottom;
     public bool isTouchLeft;
     public bool isTouchRight;
+    public bool isHit;
+    public bool isBoomTime;
 
     public GameObject bulletObjA;
     public GameObject bulletObjB;
+    public GameObject boomEffect;
+    public GameManager manager;
+    
 
     Animator anim;
 
@@ -29,6 +38,7 @@ public class Player : MonoBehaviour
         Move();
         Fire();
         Reload();
+        Boom();
     }
 
     void Move()
@@ -88,10 +98,42 @@ public class Player : MonoBehaviour
         curShotDelay = 0;
         
     }
-
+        
     void Reload()
     {
         curShotDelay += Time.deltaTime;
+    }
+
+    void Boom()
+    {
+        if (!Input.GetButton("Fire2"))
+            return;
+        
+        if (isBoomTime)
+            return;
+        
+        if (boom == 0)
+            return;
+
+        boom--;
+        isBoomTime = true;
+        manager.UpdateBoomIcon(boom);
+        
+        boomEffect.SetActive(true);
+
+        Invoke("OffBoomEffect", 3.0f);
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        for (int index = 0; index < enemies.Length; index++)
+        {
+            Enemy enemyLogic = enemies[index].GetComponent<Enemy>();
+            enemyLogic.OnHit(1000);
+        }
+        GameObject[] bullets = GameObject.FindGameObjectsWithTag("EnemyBullet");
+        for (int index = 0; index < bullets.Length; index++)
+        {
+            Destroy(bullets[index]);
+        }
+
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -114,6 +156,60 @@ public class Player : MonoBehaviour
                     break;
             }
         }
+        else if (collision.gameObject.tag == "Enemy" || collision.gameObject.tag == "EnemyBullet")
+        {
+            if (isHit)
+                return;
+            isHit = true;
+
+            life--;
+            manager.UpdateLifeIcon(life);
+
+            if (life == 0)
+            {
+                manager.GameOver();
+            }
+            else
+            {
+                manager.RespawnPlayer();
+            }
+            gameObject.SetActive(false);
+            Destroy(collision.gameObject);
+        }
+        else if (collision.gameObject.tag == "Item")
+        {
+            Item item = collision.gameObject.GetComponent<Item>();
+            switch (item.type)
+            {
+                case "Coin":
+                    score += 1000;
+                    break;
+                case "Power":
+                    if (power == maxPower)
+                    {
+                        score += 500;
+                    }
+                    else
+                        power++;
+                    break;
+                case "Boom":
+                    if (boom == maxBoom)
+                        score += 500;
+                     else 
+                        boom++;
+                        manager.UpdateBoomIcon(boom);
+                    break;
+            }
+
+            Destroy(collision.gameObject);
+        }
+
+    }
+    
+    void OffBoomEffect()
+    {
+        boomEffect.SetActive(false);
+        isBoomTime = false;
     }
 
     private void OnTriggerExit2D(Collider2D collision)

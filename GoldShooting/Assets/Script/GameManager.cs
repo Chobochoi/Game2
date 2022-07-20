@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -9,6 +11,12 @@ public class GameManager : MonoBehaviour
 
     public float maxSpawnDelay;
     public float curSpawnDelay;
+
+    public GameObject player;
+    public Text scoreText;
+    public Image[] lifeImage;
+    public Image[] boomImage;
+    public GameObject gameoverSet;
 
     private void Update()
     {
@@ -29,6 +37,7 @@ public class GameManager : MonoBehaviour
             Rigidbody2D rigid = enemy.GetComponent<Rigidbody2D>();
 
             Enemy enemyLogic = enemy.GetComponent<Enemy>();
+            enemyLogic.player = player;
 
             if (ranPoint == 5 || ranPoint == 6)
             {
@@ -45,5 +54,55 @@ public class GameManager : MonoBehaviour
                 rigid.velocity = new Vector2(0, enemyLogic.speed * (-1));
             }
         }
+
+        Player playerLogic = player.GetComponent<Player>();
+        scoreText.text = string.Format("{0:n0}", playerLogic.score);
+    }
+    public void UpdateLifeIcon(int life)
+    {
+        for (int index = 0; index < 3; index++)
+        {
+            lifeImage[index].color = new Color(1, 1, 1, 0);
+        }
+        for (int index = 0; index < life; index++)
+        {
+            lifeImage[index].color = new Color(1, 1, 1, 1);
+        }
+    }
+
+    public void UpdateBoomIcon(int boom)
+    {
+        for (int index = 0; index < 3; index++)
+        {
+            boomImage[index].color = new Color(1, 1, 1, 0);
+        }
+        for (int index = 0; index < boom; index++)
+        {
+            boomImage[index].color = new Color(1, 1, 1, 1);
+        }
+    }
+
+    public void RespawnPlayer()
+    {
+        Invoke("RespawnPlayerExe", 2f);        
+    }
+    
+    void RespawnPlayerExe()
+    {
+        player.transform.position = Vector3.down * 4f;
+        player.SetActive(true);
+
+        Player playerLogic = player.GetComponent<Player>();
+        playerLogic.isHit = false;
+    }
+
+    public void GameOver()
+    {
+        gameoverSet.SetActive(true);
+    }
+
+    public void GameRetry()
+    {
+        SceneManager.LoadScene(0);
     }
 }

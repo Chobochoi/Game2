@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 1594312849254792110}
   m_Layer: 0
   m_Name: Enemy A
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -136,8 +136,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5330c1199641222459c22d3e1f01e573, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyName: A
+  enemyScore: 100
   speed: 3
   health: 20
   sprites:
   - {fileID: 8414478535512612329, guid: 138040323294fd440a3a823e5d70ad01, type: 3}
   - {fileID: 4326287474489854147, guid: 138040323294fd440a3a823e5d70ad01, type: 3}
+  maxShotDelay: 0.2
+  curShotDelay: 0
+  power: 0
+  bulletObjA: {fileID: 7665302652608101146, guid: 0460e70dbfe541c4ebb70e905e7faeb5, type: 3}
+  bulletObjB: {fileID: 7665302652608101146, guid: f121b87847f64d34188086691d0d37f7, type: 3}
+  itemCoin: {fileID: 5143796037694466651, guid: 1a23e910e84eb904896855c8173dfef5, type: 3}
+  itemBoom: {fileID: 1050605599246368757, guid: 2981dd0b2daee8240880e894d80066e8, type: 3}
+  itemPower: {fileID: 1191051196700226519, guid: acb2ca22b01fea94380df9281682b988, type: 3}
+  player: {fileID: 0}
