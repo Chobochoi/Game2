@@ -8,13 +8,17 @@ public class Wall : MonoBehaviour
     public Sprite dmgSprite;
     public SpriteRenderer spriteRenderer;
 
-    void Start()
+    public AudioClip hitSound1;
+    public AudioClip hitSound2;
+
+    void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     public void DamageWall(int loss)
     {
+        SoundManager.instance.RandomizeSfx(hitSound1, hitSound2);
         spriteRenderer.sprite = dmgSprite;
 
         hitTime -= loss;
@@ -23,10 +27,5 @@ public class Wall : MonoBehaviour
         {
             gameObject.SetActive(false);
         }
-    }
-
-    void Update()
-    {
-        
-    }
+    }    
 }
